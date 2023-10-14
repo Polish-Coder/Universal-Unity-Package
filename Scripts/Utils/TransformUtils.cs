@@ -40,5 +40,20 @@ namespace UniversalUnityPackage
 
             return components.ToArray();
         }
+
+        public static T GetParent<T>(this Transform transform) where T : Component
+        {
+            while (true)
+            {
+                if (transform.TryGetComponent(out T component))
+                {
+                    return component;
+                }
+
+                if (transform.parent == null) return null;
+                
+                transform = transform.parent;
+            }
+        }
     }
 }
