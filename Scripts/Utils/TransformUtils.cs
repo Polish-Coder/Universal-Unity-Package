@@ -1,31 +1,44 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace UniversalUnityPackage
 {
     public static class TransformUtils
     {
-        public static Transform[] GetChildren(this Transform parent)
+        public static Transform[] GetChildren(this Transform parent, bool recursive = false)
         {
-            Transform[] children = new Transform[parent.childCount];
+            List<Transform> children = new List<Transform>();
 
-            for (int i = 0; i < children.Length; i++)
+            if (!recursive)
             {
-                children[i] = parent.GetChild(i);
+                for (int i = 0; i < parent.childCount; i++)
+                {
+                    children.Add(parent.GetChild(i));
+                }
+            }
+            else
+            {
+                children.AddRange(parent.GetComponentsInChildren<Transform>());
             }
 
-            return children;
+            return children.ToArray();
         }
 
-        public static T[] GetChildren<T>(this Transform parent) where T : Component
+        public static T[] GetChildren<T>(this Transform parent, bool recursive = false) where T : Component
         {
-            T[] components = new T[parent.childCount];
+            List<T> components = new List<T>();
 
-            for (int i = 0; i < components.Length; i++)
+            Transform[] children = parent.GetChildren(recursive);
+            
+            foreach (Transform child in children)
             {
-                components[i] = parent.GetChild(i).GetComponent<T>();
+                if (child.TryGetComponent(out T component))
+                {
+                    components.Add(component);
+                }
             }
 
-            return components;
+            return components.ToArray();
         }
     }
 }
