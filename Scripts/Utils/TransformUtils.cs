@@ -41,6 +41,14 @@ namespace UniversalUnityPackage
             return components.ToArray();
         }
 
+        public static void DestroyChildren(this Transform transform)
+        {
+            foreach (Transform child in transform.GetChildren())
+            {
+                Object.Destroy(child.gameObject);
+            }
+        }
+
         public static T GetParent<T>(this Transform transform) where T : Component
         {
             while (true)
